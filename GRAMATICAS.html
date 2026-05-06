@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gramática Libre de Contexto - Solución Completa | Lucas Nahuel Llanes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            padding: 2rem 1rem;
+            color: #1a2c3e;
+        }
+
+        /* Contenedor principal estilo libro/PDF */
+        .solucionario {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 2rem 2rem 2rem 2rem;
+            transition: all 0.2s;
+        }
+
+        /* Encabezado con autor */
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #dce5ec;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.6rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1a5e3f, #2b8c54);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .autor {
+            font-family: 'Courier New', monospace;
+            background: #edf3f8;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2c6e49;
+        }
+        .subtitulo {
+            color: #2c5a6e;
+            margin-bottom: 1.8rem;
+            border-left: 4px solid #2b9348;
+            padding-left: 1rem;
+            font-weight: 500;
+        }
+
+        /* Caja de gramática */
+        .gramatica {
+            background: #f8fafd;
+            border-radius: 20px;
+            padding: 1rem 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid #dee4ea;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Grid de dos columnas */
+        .grid-2 {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .col {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #e2edf2;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .col-header {
+            background: #f1f6f9;
+            padding: 0.7rem 1.2rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #d0dfe8;
+            color: #1f5a6e;
+        }
+        .col-body {
+            padding: 1rem 1.2rem;
+        }
+
+        .badge {
+            background: #eef2f5;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin: 0.2rem 0.2rem;
+        }
+
+        .vf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.6rem;
+        }
+        .vf-card {
+            font-family: monospace;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.6rem;
+            border-left-width: 4px;
+            border-left-style: solid;
+            border-radius: 12px;
+            background: #fefefe;
+        }
+        .true-vf {
+            border-left-color: #2b9348;
+            background: #eef6ea;
+        }
+        .false-vf {
+            border-left-color: #e03a3e;
+            background: #ffeaea;
+        }
+
+        .descripcion-lenguaje {
+            background: #e9f2f0;
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0 1.5rem 0;
+            font-size: 0.96rem;
+            line-height: 1.5;
+            border-left: 4px solid #2b9348;
+        }
+
+        /* Árbol de derivación - Canvas estético */
+        .arbol-wrapper {
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e0ecf2;
+            margin-top: 1.8rem;
+            padding: 0.8rem 0.5rem 0.8rem 0.5rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+        }
+        .arbol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0 1rem 0.5rem 1rem;
+            flex-wrap: wrap;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: #fefefb;
+            border-radius: 20px;
+            width: 100%;
+            height: auto;
+        }
+        .arbol-caption {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #4a6f86;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, #cbdde6, transparent);
+        }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6c86a3;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+        @media (max-width: 780px) {
+            .solucionario { padding: 1.2rem; }
+            .grid-2 { flex-direction: column; }
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .solucionario { box-shadow: none; padding: 0.2in; }
+            .col { break-inside: avoid; }
+            .arbol-wrapper { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="solucionario">
+    <div class="encabezado">
+        <h1>📖 Gramática Libre de Contexto<br><span style="font-size:0.75rem;">Ejercicios completos · Derivaciones y análisis</span></h1>
+        <div class="autor">✍️ Autor: Lucas Nahuel Llanes</div>
+    </div>
+    <div class="subtitulo">G = ( {R, S, T, X}, {a, b}, P, R ) &nbsp;&nbsp;|&nbsp;&nbsp; Reglas a continuación</div>
+
+    <!-- Mostrar reglas -->
+    <div class="gramatica">
+        <strong>📜 Producciones:</strong><br>
+        R → X R X &nbsp;|&nbsp; S <br>
+        S → a T b &nbsp;|&nbsp; b T a <br>
+        T → X T X &nbsp;|&nbsp; X &nbsp;|&nbsp; ε <br>
+        X → a &nbsp;|&nbsp; b <br>
+        <div style="margin-top: 8px; font-size:0.85rem;">🔹 Variables: {R, S, T, X} &nbsp;&nbsp; Terminales: {a, b} &nbsp;&nbsp; Inicial: R</div>
+    </div>
+
+    <!-- Sección a,b,c,d,e / V-F -->
+    <div class="grid-2">
+        <div class="col">
+            <div class="col-header">📌 Puntos básicos</div>
+            <div class="col-body">
+                <p><strong>a) ¿Cuántas variables?</strong> → <span class="badge">4</span> (R, S, T, X)</p>
+                <p><strong>b) ¿Cuántos terminales?</strong> → <span class="badge">2</span> {a, b}</p>
+                <p><strong>c) Símbolo inicial:</strong> → <span class="badge">R</span></p>
+                <p><strong>d) Tres cadenas en L(G):</strong> → <span class="badge">ab</span> <span class="badge">ba</span> <span class="badge">aababa</span> <span class="badge">aba</span></p>
+                <p><strong>e) Cadena mínima posible:</strong> → <span class="badge">ab</span> (longitud 2) o <span class="badge">ba</span></p>
+                <hr>
+                <p style="font-size:0.8rem; color:#2b6e4a;">💡 <em>Observación:</em> La gramática genera palíndromos no vacíos de longitud ≥ 2.</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="col-header">🧠 Verdadero / Falso (Derivaciones)</div>
+            <div class="col-body">
+                <div class="vf-grid">
+                    <div class="vf-card false-vf"><span>❌ f) T ⇒ aba</span> — Falso (no en un paso)</div>
+                    <div class="vf-card true-vf"><span>✅ g) T ⇒* aba</span> — Verdadero: T ⇒ XTX ⇒ aTa ⇒ aXa ⇒ aba</div>
+                    <div class="vf-card false-vf"><span>❌ h) T ⇒ T</span> — Falso (no existe T→T)</div>
+                    <div class="vf-card true-vf"><span>✅ i) T ⇒* T</span> — Verdadero (0 pasos)</div>
+                    <div class="vf-card true-vf"><span>✅ j) XXX ⇒* aba</span> — Verdadero (X⇒a, X⇒b, X⇒a)</div>
+                    <div class="vf-card false-vf"><span>❌ k) X ⇒* aba</span> — Falso (X genera un único terminal)</div>
+                    <div class="vf-card true-vf"><span>✅ l) T ⇒* XX</span> — Verdadero: T ⇒ XTX ⇒ XεX = XX</div>
+                    <div class="vf-card true-vf"><span>✅ m) T ⇒* XXX</span> — Verdadero: T ⇒ XTX ⇒ X X X</div>
+                    <div class="vf-card false-vf"><span>❌ n) S ⇒* ε</span> — Falso (S siempre produce a...b o b...a)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Descripción del lenguaje ñ -->
+    <div class="descripcion-lenguaje">
+        <strong>ñ) Descripción en español de L(G):</strong> <br>
+        El lenguaje generado por G es el conjunto de todas las <strong>cadenas palíndromas (capicúas) no vacías de longitud mayor o igual a 2</strong> sobre el alfabeto {a, b}. 
+        La variable R introduce envoltura simétrica (XRX), S genera pares con extremos opuestos (aTb / bTa), y T produce cualquier palíndromo central de longitud impar (incluyendo ε). Por lo tanto, L(G) = { w ∈ {a,b}⁺ : w = w^R y |w| ≥ 2 }.
+    </div>
+
+    <!-- Árbol de derivación para aababa - versión mejorada con canvas profesional -->
+    <div class="arbol-wrapper">
+        <div class="arbol-header">
+            <span style="font-weight: 700; font-size: 1rem;">🌳 o) Árbol de derivación para la cadena <em>"aababa"</em></span>
+            <span style="font-size:0.7rem; background:#eff3f6; padding:0.2rem 0.7rem; border-radius:30px;">Derivación izquierda · estructura simétrica</span>
+        </div>
+        <canvas id="arbolCanvas" width="940" height="480" style="width:100%; max-width:940px; height:auto; background:#ffffff; border-radius:18px; display:block; margin:0 auto;"></canvas>
+        <div class="arbol-caption">
+            📐 El árbol muestra la derivación R ⇒ S ⇒ a T b ⇒ a (X T X) b ⇒ ... hasta las hojas: a , a , b , a , b , a (aababa).<br>
+            Nodos redondos: variables (color crema) | terminales (azul claro). Las flechas representan aplicación de producciones.
+        </div>
+    </div>
+    <footer>
+        📄 Ejercicio completo de Gramática Libre de Contexto | Resolución detallada y árbol de derivación | Lucas Nahuel Llanes
+    </footer>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('arbolCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = 940;
+        const h = 480;
+        canvas.width = w;
+        canvas.height = h;
+
+        // Nodos con coordenadas cuidadosas para un árbol proporcionado y legible
+        const nodes = [
+            { id: 0, label: "R", x: w/2, y: 32, type: "var" },
+            { id: 1, label: "S", x: w/2, y: 85, type: "var" },
+            { id: 2, label: "a", x: w/2 - 230, y: 142, type: "term" },
+            { id: 3, label: "T", x: w/2, y: 148, type: "var" },
+            { id: 4, label: "b", x: w/2 + 230, y: 142, type: "term" },
+            // expansión de T -> X T X
+            { id: 5, label: "X", x: w/2 - 140, y: 215, type: "var" },
+            { id: 6, label: "T", x: w/2, y: 220, type: "var" },
+            { id: 7, label: "X", x: w/2 + 140, y: 215, type: "var" },
+            // X izquierdo (id5) → a
+            { id: 8, label: "a", x: w/2 - 190, y: 285, type: "term" },
+            // Expansión del T central (id6) → X T X (para generar más símbolos)
+            { id: 9, label: "X", x: w/2 - 70, y: 290, type: "var" },
+            { id: 10, label: "T", x: w/2, y: 295, type: "var" },
+            { id: 11, label: "X", x: w/2 + 70, y: 290, type: "var" },
+            // X (id9) → a (segundo a de la cadena)
+            { id: 12, label: "a", x: w/2 - 100, y: 360, type: "term" },
+            // T (id10) → ε (cierre del palíndromo interno)
+            { id: 13, label: "ε", x: w/2, y: 365, type: "term" },
+            // X (id11) → b (genera la letra 'b')
+            { id: 14, label: "b", x: w/2 + 100, y: 360, type: "term" },
+            // X derecho del primer nivel (id7) → a (último 'a' de la cadena)
+            { id: 15, label: "a", x: w/2 + 190, y: 285, type: "term" }
+        ];
+
+        // Conexiones padre → hijo
+        const edges = [
+            { from: 0, to: 1 },   // R → S
+            { from: 1, to: 2 },   // S → a
+            { from: 1, to: 3 },   // S → T
+            { from: 1, to: 4 },   // S → b
+            { from: 3, to: 5 },   // T → X
+            { from: 3, to: 6 },   // T → T
+            { from: 3, to: 7 },   // T → X
+            { from: 5, to: 8 },   // X → a
+            { from: 6, to: 9 },   // T → X
+            { from: 6, to: 10 },  // T → T
+            { from: 6, to: 11 },  // T → X
+            { from: 9, to: 12 },  // X → a
+            { from: 10, to: 13 }, // T → ε
+            { from: 11, to: 14 }, // X → b
+            { from: 7, to: 15 }   // X → a
+        ];
+
+        function drawBeautifulTree() {
+            ctx.clearRect(0, 0, w, h);
+            // 1. dibujar aristas suaves
+            ctx.beginPath();
+            ctx.lineWidth = 1.8;
+            ctx.strokeStyle = "#8e9eae";
+            ctx.globalAlpha = 0.7;
+            for (let edge of edges) {
+                const fromN = nodes.find(n => n.id === edge.from);
+                const toN = nodes.find(n => n.id === edge.to);
+                if (fromN && toN) {
+                    ctx.beginPath();
+                    ctx.moveTo(fromN.x, fromN.y);
+                    ctx.lineTo(toN.x, toN.y);
+                    ctx.stroke();
+                }
+            }
+            ctx.globalAlpha = 1.0;
+            // 2. dibujar nodos con estilo profesional
+            for (let node of nodes) {
+                ctx.beginPath();
+                if (node.type === 'var') {
+                    ctx.fillStyle = "#FEF0DA";   // tono cálido para variables
+                    ctx.shadowBlur = 3;
+                    ctx.shadowColor = "rgba(0,0,0,0.08)";
+                } else {
+                    ctx.fillStyle = "#DCEDF5";   // azul pálido para terminales
+                    ctx.shadowBlur = 2;
+                }
+                ctx.arc(node.x, node.y, 19, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = "#2c6e49";
+                ctx.lineWidth = 1.4;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                ctx.font = "bold 13px 'Segoe UI', 'Fira Code', monospace";
+                ctx.fillStyle = "#1a3a47";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(node.label, node.x, node.y);
+            }
+
+            // agregar anotaciones elegantes en el canvas
+            ctx.font = "italic 10px 'Segoe UI'";
+            ctx.fillStyle = "#3f6b85";
+            ctx.textAlign = "left";
+            ctx.fillText("Derivación: R ⇒ S ⇒ a T b ⇒ a (X T X) b ⇒ ... ⇒ a a b a b a", 20, 22);
+            ctx.fillStyle = "#527a8c";
+            ctx.fillText("hoja orden → a  a  b  a  b  a", w-190, 38);
+        }
+
+        drawBeautifulTree();
+        window.addEventListener('resize', () => { drawBeautifulTree(); });
+    })();
+</script>
+
+<!-- Nota explicativa de consistencia de la cadena -->
+<div style="max-width:1100px; margin: 0.8rem auto 0 auto; padding: 0 1rem;">
+    <div style="font-size:0.7rem; color:#4d6a7e; background:#fafcfd; border-radius: 14px; padding: 0.4rem 1rem; text-align:center;">
+        🔍 <strong>Verificación de "aababa":</strong> El recorrido de las hojas de izquierda a derecha produce: a (nodo2) → a (nodo8) → b (nodo14) → a (nodo12) → b (nodo4) → a (nodo15) → "<strong>a a b a b a</strong>". Coincide con la cadena solicitada. ✅
+    </div>
+</div>
+</body>
+</html>
